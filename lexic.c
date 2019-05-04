@@ -46,13 +46,22 @@
 int scanner(char *palavra);
 void writeLex(int def, int inicio, int final);
 
-char *palavra = "if 2345 true (  /* ** x & */  x & ## >=  ";
+char *palavra;
+char *fileIn;
+char *fileOut;
 
-int main(){
+int main(int argc, char *argv[]){
+	if(argc < 3){
+		printf("args missing pass lexic.exe file_input file_output");
+		return -1;
+	}
+	fileIn = argv[1];
+	fileOut = argv[2];
+	palavra = "if 2345 true (  /* ** x & */  x & ## >=  ";
 	if(scanner(palavra)){
-		printf("SUCESSO!! - output.txt");
+		printf("SUCESS!! - %s", fileOut);
 	}else{
-		printf("ERRADO!! - output.txt");
+		printf("FAIL!! - %s", fileOut);
 	}
 	return 0;
 }
@@ -375,7 +384,8 @@ int scanner(char *palavra){
 	q4: c = palavra[++k];
 	switch(c){
 		case ' ':
-			writeLex(_COMENTARIO_, i, k--);
+			// no necessary to note comment 
+			writeLex(_COMENTARIO_, i, i);
 			goto q0;
 		break;
 		default:
