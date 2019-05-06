@@ -1,6 +1,5 @@
 //Fernando Bontorin, 31568343
 //Guilherme, 31324101
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,20 +48,46 @@ void writeLex(int def, int inicio, int final);
 char *palavra;
 char *fileIn;
 char *fileOut;
+FILE *fileInput;
+FILE *fileOutput;
 
 int main(int argc, char *argv[]){
-	if(argc < 3){
-		printf("args missing pass lexic.exe file_input file_output");
-		return -1;
-	}
-	fileIn = argv[1];
-	fileOut = argv[2];
-	palavra = "if 2345 true (  /* ** x & */  x & ## >=  ";
-	if(scanner(palavra)){
-		printf("SUCESS!! - %s", fileOut);
+	if(argc == 2){
+		fileIn = argv[1];
+		fileOut = "saida.txt";
+	}else if(argc == 3){
+		fileIn = argv[1];
+		fileOut = argv[2];
 	}else{
-		printf("FAIL!! - %s", fileOut);
+		fileIn = "entrada.txt";
+		fileOut = "saida.txt";
 	}
+	fileInput = fopen(fileIn, "rt");
+	fileOutput = fopen(fileOut, "a");
+
+if (fileInput == NULL)  // Se houve erro na abertura
+  {
+     printf("Problemas na abertura do arquivo\n");
+	 return 0;
+  }
+	while (!feof(fileInput)){
+		fgets(palavra, 256, fileInput);
+		printf("palavra = %s", palavra);
+		if(palavra){
+			if(scanner(palavra)){
+				fclose(fileInput);
+				fclose(fileOutput);
+				printf("token nao foi reconhecido");
+				return -1;
+			}
+		}
+	}
+	while( (fgets(palavra, 1024, fileInput))!=NULL ){
+		fprintf(fileOutput, "Line: %s");
+	}
+	
+	fclose(fileInput);
+	fclose(fileOutput);
 	return 0;
 }
 
@@ -1066,7 +1091,7 @@ int scanner(char *palavra){
 
 void writeLex(int def, int inicio, int final){
 	FILE *fp;
-	fp = fopen("output.txt", "a");
+	fp = fileOutput;
 	fprintf(fp, "\n");
 	char s[128];
 	for(int i = 0; i < final-inicio; i++)
@@ -1191,5 +1216,4 @@ void writeLex(int def, int inicio, int final){
 	}
 	
 	fprintf(fp, "\n");
-	fclose(fp);
 }
